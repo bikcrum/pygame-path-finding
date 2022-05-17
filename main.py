@@ -37,7 +37,7 @@ class Astar(AbstractAstar):
         return self.world[nodes[:, 0], nodes[:, 1]] != 5
 
     def heuristic(self, location, destination):
-        return sum(np.abs(location - destination))
+        return abs(location[0] - destination[0] + location[1] - destination[1])
 
     def cost_to_child(self):
         return 1
@@ -48,7 +48,7 @@ def place(source, destination, location):
 
 
 def main():
-    resolution = (20, 20)
+    resolution = (50, 50)
     window_size = (800, 800)
 
     # world as basic array
@@ -83,7 +83,7 @@ def main():
     # set location of actor and dest
     actor_loc = (0, 0)
     dest_loc = (world.shape[0] - 1, world.shape[1] - 1)
-    obstacles_loc = [(1, 1)]
+    obstacles_loc = []
 
     start = time.time()
 
@@ -96,14 +96,11 @@ def main():
         for obstacle_loc in obstacles_loc:
             place(obstacle, world, location=obstacle_loc)
 
-        # if disp.key_down:
         path = astar.get_optimal_path(actor_loc, dest_loc)
-        # p = list(map(lambda x:x.location, path))
         if path is not None:
             for trace in path:
                 path_trace = np.empty(shape=(1, 1), dtype=object)
-                path_trace[0, 0] = (6, f'f={trace.f}, g={trace.g}, h={trace.h}')
-                # path_trace[0, 0] = (6, '')
+                # path_trace[0, 0] = (6, f'f={trace.f}, g={trace.g}, h={trace.h}')
                 place(path_trace, world, trace.location)
 
         place(actor, world, location=actor_loc)
@@ -112,7 +109,7 @@ def main():
 
         if time.time() - start > 0.5 and path is not None and len(path) > 1:
             start = time.time()
-            # actor_loc = path[1].location
+            actor_loc = path[1].location
 
         disp.update()
 

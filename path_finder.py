@@ -69,17 +69,18 @@ class AbstractAstar:
 
             # find all children (8-way)
             children = np.array(
-                [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1)]) + current_node.location
+                [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1)],
+                dtype=int) + current_node.location
 
             # discard children out of bound
             children = children[np.all((children >= [0, 0])
                                        & (children < self.world.shape), axis=1)]
 
             # discard children is not valid (eg. block)
-            children = children[self.is_valid(children)]
+            children = children[self.is_valid(children)].tolist()
 
             # convert children into a node pointing to parent
-            children = map(lambda x: Node(current_node, x), children)
+            children = map(lambda x: Node(current_node, tuple(x)), children)
 
             for child in children:
                 if child in closed_list:
