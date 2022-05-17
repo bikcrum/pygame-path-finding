@@ -33,10 +33,8 @@ class Display(AbstractDisplay):
 
 
 class Astar(AbstractAstar):
-    def is_valid(self, x, y, value):
-        if value == 5:
-            return False
-        return True
+    def is_valid(self, nodes):
+        return self.world[nodes[:, 0], nodes[:, 1]] != 5
 
     def heuristic(self, location, destination):
         return sum(np.abs(location - destination))
@@ -85,7 +83,7 @@ def main():
     # set location of actor and dest
     actor_loc = (0, 0)
     dest_loc = (world.shape[0] - 1, world.shape[1] - 1)
-    obstacles_loc = []
+    obstacles_loc = [(1, 1)]
 
     start = time.time()
 
@@ -105,16 +103,16 @@ def main():
             for trace in path:
                 path_trace = np.empty(shape=(1, 1), dtype=object)
                 path_trace[0, 0] = (6, f'f={trace.f}, g={trace.g}, h={trace.h}')
-                path_trace[0, 0] = (6, '')
+                # path_trace[0, 0] = (6, '')
                 place(path_trace, world, trace.location)
 
         place(actor, world, location=actor_loc)
         place(destination, world, location=dest_loc)
         place(mouse, world, disp.get_mouse_position())
 
-        if time.time() - start > 0.5 and len(path) > 1:
+        if time.time() - start > 0.5 and path is not None and len(path) > 1:
             start = time.time()
-            actor_loc = path[1].location
+            # actor_loc = path[1].location
 
         disp.update()
 
