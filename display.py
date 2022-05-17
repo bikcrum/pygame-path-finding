@@ -15,6 +15,7 @@ class AbstractDisplay:
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
         self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font(pygame.font.get_default_font(), 12)
         self.mouse_down = False
         self.key_down = False
 
